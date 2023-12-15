@@ -2,14 +2,27 @@ import os
 import cv2
 import numpy as np
 from flask import Flask, request, jsonify
-from keras.preprocessing import image
 from tensorflow.keras.models import load_model
 from werkzeug.utils import secure_filename
+import zipfile
 
 app = Flask(__name__)
 
+# Define the directory for the extracted model
+model_dir = 'extracted_model'
+
+# Function to extract the model file
+def extract_model():
+    with zipfile.ZipFile('model.zip', 'r') as zip_ref:
+        zip_ref.extract('model.h5', model_dir)
+
+# Check if model file exists, if not extract from ZIP
+if not os.path.isfile(os.path.join(model_dir, 'model.h5')):
+    extract_model()
+
 # Load the pre-trained emotion detection model
-model = load_model('model.h5')
+model_path = os.path.join(model_dir, 'model.h5')
+model = load_model(model_path)
 
 # Define emotion labels
 label_map = ['Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral']
@@ -34,14 +47,14 @@ def predict_emotion():
     file_path = os.path.join(uploads_dir, filename)
     image_file.save(file_path)
 
-    # Load the saved image using Keras
-    img = image.load_img(file_path, target_size=(48, 48), color_mode='grayscale')
-    img_array = image.img_to_array(img)
-    resized_image = np.expand_dims(img_array, axis=0)
-    resized_image = resized_image / 255.0
+    # Load the saved image using OpenCV (cv2)
+    img = cv2.imread(file_path, cv2.IMREAD_GRAYSCALE)
+    img = cv2.resize(img, (48, 48))
+    img_array = np.expand_dims(img, axis=0)
+    img_array = img_array / 255.0
 
     # Predict emotion
-    prediction = model.predict(resized_image)
+    prediction = model.predict(img_array)
     prediction = np.argmax(prediction)
     final_prediction = label_map[prediction]
 
