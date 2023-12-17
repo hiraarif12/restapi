@@ -1,10 +1,6 @@
 Flask
-keras
 numpy
 opencv-python-headless
 Pillow
-requests
-requests-oauthlib
 tensorflow
-Werkzeug
 gunicorn
