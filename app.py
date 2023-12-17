@@ -13,15 +13,15 @@ model_dir = 'extracted_model'
 
 # Function to extract the model file
 def extract_model():
-    with zipfile.ZipFile('model.zip', 'r') as zip_ref:
-        zip_ref.extract('model.h5', model_dir)
+    with zipfile.ZipFile('best_model.zip', 'r') as zip_ref:
+        zip_ref.extract('best_model.h5', model_dir)
 
 # Check if model file exists, if not extract from ZIP
-if not os.path.isfile(os.path.join(model_dir, 'model.h5')):
+if not os.path.isfile(os.path.join(model_dir, 'best_model.h5')):
     extract_model()
 
 # Load the pre-trained emotion detection model
-model_path = os.path.join(model_dir, 'model.h5')
+model_path = os.path.join(model_dir, 'best_model.h5')
 model = load_model(model_path)
 
 # Define emotion labels
