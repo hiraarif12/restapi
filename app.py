@@ -1,10 +1,11 @@
 import os
-import cv2
 import numpy as np
 from flask import Flask, request, jsonify
 from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing import image as keras_image
 from werkzeug.utils import secure_filename
 import zipfile
+from PIL import Image
 
 app = Flask(__name__)
 
@@ -47,10 +48,11 @@ def predict_emotion():
     file_path = os.path.join(uploads_dir, filename)
     image_file.save(file_path)
 
-    # Load the saved image using OpenCV (cv2)
-    img = cv2.imread(file_path, cv2.IMREAD_GRAYSCALE)
-    img = cv2.resize(img, (48, 48))
-    img_array = np.expand_dims(img, axis=0)
+    # Load the saved image using PIL (Python Imaging Library)
+    img = Image.open(file_path).convert('L')  # Convert to grayscale
+    img = img.resize((48, 48))
+    img_array = keras_image.img_to_array(img)
+    img_array = np.expand_dims(img_array, axis=0)
     img_array = img_array / 255.0
 
     # Predict emotion
