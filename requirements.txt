@@ -1,4 +1,4 @@
 pip==18.0
 Flask==1.0.0
 tensorflow== 2.5.0
-Gunicorn==18.0
+Gunicorn==15.0
