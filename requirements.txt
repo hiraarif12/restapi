@@ -2,4 +2,3 @@ pip==18.0
 setuptools==49.5.0
 Flask==0.10.0
 tensorflow==2.5.0
-Gunicorn==18.0
